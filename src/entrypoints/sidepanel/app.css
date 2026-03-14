@@ -1,0 +1,31 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-card-hover: #1a2745;
+  --text: #e0e0e0;
+  --text-muted: #8892a4;
+  --accent: #6c63ff;
+  --accent-dim: #4a44b2;
+  --border: #2a2a4a;
+  --tag-bg: #2a2a4a;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#app {
+  min-height: 100vh;
+}
