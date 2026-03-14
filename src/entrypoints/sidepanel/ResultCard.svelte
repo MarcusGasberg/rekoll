@@ -9,9 +9,10 @@
       title: string;
       textContent: string;
     };
+    score?: number;
   }
 
-  let { event }: Props = $props();
+  let { event, score }: Props = $props();
 
   function relativeTime(timestamp: number): string {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
@@ -48,6 +49,9 @@
   <div class="tags">
     <span class="badge domain">{event.domain}</span>
     <span class="badge event-type">{event.eventType}</span>
+    {#if score != null}
+      <span class="badge score">{Math.round(score * 100)}%</span>
+    {/if}
   </div>
 
   {#if snippet}
@@ -121,6 +125,13 @@
     background: var(--accent);
     color: var(--bg-card);
     font-weight: 500;
+  }
+
+  .score {
+    background: var(--accent-dim);
+    color: #fff;
+    font-weight: 600;
+    margin-left: auto;
   }
 
   .snippet {

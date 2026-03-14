@@ -14,6 +14,16 @@ export default defineConfig({
       'activeTab',
       'sidePanel',
       'webNavigation',
+      'offscreen',
+    ],
+    content_security_policy: {
+      extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+    },
+    web_accessible_resources: [
+      {
+        resources: ['wasm/*'],
+        matches: ['<all_urls>'],
+      },
     ],
   },
 });

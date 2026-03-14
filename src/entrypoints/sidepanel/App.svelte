@@ -1,9 +1,15 @@
 <script lang="ts">
   import type { BrowsingEvent, EventsResultMessage } from '@/shared/types';
+  import type { SearchResponse, SearchResult, ModelStatusResponse } from '@/shared/messages';
   import ResultCard from './ResultCard.svelte';
+  import SearchBar from './SearchBar.svelte';
 
   let events: BrowsingEvent[] = $state([]);
   let loading = $state(true);
+  let searchResults: SearchResult[] = $state([]);
+  let searching = $state(false);
+  let searchMode = $state(false);
+  let modelReady = $state(false);
 
   async function fetchEvents() {
     loading = true;
@@ -22,10 +28,52 @@
     }
   }
 
+  async function handleSearch(query: string) {
+    searching = true;
+    searchMode = true;
+    try {
+      const response: SearchResponse = await browser.runtime.sendMessage({
+        type: 'SEARCH',
+        query,
+        limit: 20,
+      });
+      if (response?.type === 'SEARCH_RESULT') {
+        searchResults = response.results;
+      }
+    } catch (err) {
+      console.error('Search failed:', err);
+    } finally {
+      searching = false;
+    }
+  }
+
+  function handleReset() {
+    searchResults = [];
+    searchMode = false;
+  }
+
+  async function checkModelStatus() {
+    try {
+      const response: ModelStatusResponse = await browser.runtime.sendMessage({
+        type: 'MODEL_STATUS',
+      });
+      if (response?.type === 'MODEL_STATUS_RESULT') {
+        modelReady = response.ready;
+      }
+    } catch (err) {
+      console.error('Failed to check model status:', err);
+    }
+  }
+
   $effect(() => {
     fetchEvents();
-    const interval = setInterval(fetchEvents, 10_000);
-    return () => clearInterval(interval);
+    checkModelStatus();
+    const eventsInterval = setInterval(fetchEvents, 10_000);
+    const modelInterval = setInterval(checkModelStatus, 5_000);
+    return () => {
+      clearInterval(eventsInterval);
+      clearInterval(modelInterval);
+    };
   });
 </script>
 
@@ -33,15 +81,36 @@
   <header class="header">
     <div class="header-left">
       <h1 class="title">Browsing Events</h1>
-      <span class="count">{events.length}</span>
+      <span class="count">{searchMode ? searchResults.length : events.length}</span>
     </div>
     <button class="refresh-btn" onclick={fetchEvents} disabled={loading}>
       {loading ? 'Loading...' : 'Refresh'}
     </button>
   </header>
 
+  <div class="search-section">
+    <SearchBar
+      onsearch={handleSearch}
+      onreset={handleReset}
+      loading={searching}
+      {modelReady}
+    />
+  </div>
+
   <main class="content">
-    {#if loading && events.length === 0}
+    {#if searchMode}
+      {#if searching}
+        <p class="status">Searching...</p>
+      {:else if searchResults.length === 0}
+        <p class="status">No results found.</p>
+      {:else}
+        <div class="event-list">
+          {#each searchResults as result, i (i)}
+            <ResultCard event={result.event} score={result.score} />
+          {/each}
+        </div>
+      {/if}
+    {:else if loading && events.length === 0}
       <p class="status">Loading events...</p>
     {:else if events.length === 0}
       <p class="status">No events recorded yet.</p>
@@ -109,6 +178,13 @@
   .refresh-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  .search-section {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    flex-shrink: 0;
   }
 
   .content {
