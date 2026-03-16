@@ -1,8 +1,10 @@
 <script lang="ts">
-  import type { BrowsingEvent, EventsResultMessage } from '@/shared/types';
+  import type { BrowsingEvent, EventsResultMessage, EventType } from '@/shared/types';
   import type { SearchResponse, SearchResult, ModelStatusResponse } from '@/shared/messages';
   import ResultCard from './ResultCard.svelte';
   import SearchBar from './SearchBar.svelte';
+  import EventTypeFilter from './EventTypeFilter.svelte';
+  import { CoreLoop, Timeline, RecallAi } from './icons';
 
   let events: BrowsingEvent[] = $state([]);
   let loading = $state(true);
@@ -10,6 +12,11 @@
   let searching = $state(false);
   let searchMode = $state(false);
   let modelReady = $state(false);
+  let eventTypeFilter: EventType | null = $state(null);
+
+  let filteredEvents = $derived(
+    eventTypeFilter ? events.filter((e) => e.eventType === eventTypeFilter) : events
+  );
 
   async function fetchEvents() {
     loading = true;
@@ -36,6 +43,7 @@
         type: 'SEARCH',
         query,
         limit: 20,
+        ...(eventTypeFilter ? { filters: { eventType: eventTypeFilter } } : {}),
       });
       if (response?.type === 'SEARCH_RESULT') {
         searchResults = response.results;
@@ -80,8 +88,9 @@
 <div class="panel">
   <header class="header">
     <div class="header-left">
+      <CoreLoop size={18} />
       <h1 class="title">Browsing Events</h1>
-      <span class="count">{searchMode ? searchResults.length : events.length}</span>
+      <span class="count">{searchMode ? searchResults.length : filteredEvents.length}</span>
     </div>
     <button class="refresh-btn" onclick={fetchEvents} disabled={loading}>
       {loading ? 'Loading...' : 'Refresh'}
@@ -97,12 +106,25 @@
     />
   </div>
 
+  <div class="filter-section">
+    <EventTypeFilter
+      selected={eventTypeFilter}
+      onchange={(type) => { eventTypeFilter = type; }}
+    />
+  </div>
+
   <main class="content">
     {#if searchMode}
       {#if searching}
-        <p class="status">Searching...</p>
+        <div class="status">
+          <CoreLoop size={24} class="icon-spin" />
+          <p>Searching...</p>
+        </div>
       {:else if searchResults.length === 0}
-        <p class="status">No results found.</p>
+        <div class="status">
+          <RecallAi size={32} />
+          <p>No results found.</p>
+        </div>
       {:else}
         <div class="event-list">
           {#each searchResults as result, i (i)}
@@ -110,13 +132,19 @@
           {/each}
         </div>
       {/if}
-    {:else if loading && events.length === 0}
-      <p class="status">Loading events...</p>
-    {:else if events.length === 0}
-      <p class="status">No events recorded yet.</p>
+    {:else if loading && filteredEvents.length === 0}
+      <div class="status">
+        <CoreLoop size={24} class="icon-spin" />
+        <p>Loading events...</p>
+      </div>
+    {:else if filteredEvents.length === 0}
+      <div class="status">
+        <Timeline size={32} />
+        <p>No events recorded yet.</p>
+      </div>
     {:else}
       <div class="event-list">
-        {#each events as event (event.id ?? event.timestamp)}
+        {#each filteredEvents as event (event.id ?? event.timestamp)}
           <ResultCard {event} />
         {/each}
       </div>
@@ -137,7 +165,9 @@
     justify-content: space-between;
     padding: 12px 16px;
     border-bottom: 1px solid var(--border);
-    background: var(--bg-card);
+    background: rgba(23, 23, 23, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     flex-shrink: 0;
   }
 
@@ -149,30 +179,34 @@
 
   .title {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 300;
   }
 
   .count {
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 500;
     color: var(--text-muted);
     background: var(--tag-bg);
+    border: 1px solid var(--border);
     padding: 2px 8px;
-    border-radius: 10px;
+    border-radius: 9999px;
   }
 
   .refresh-btn {
-    background: var(--accent);
-    color: #fff;
-    border: none;
+    background: var(--tag-bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
     padding: 6px 14px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: all 0.15s;
   }
 
   .refresh-btn:hover:not(:disabled) {
-    background: var(--accent-dim);
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+    color: var(--text);
   }
 
   .refresh-btn:disabled {
@@ -187,13 +221,39 @@
     flex-shrink: 0;
   }
 
+  .filter-section {
+    padding: 6px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    flex-shrink: 0;
+  }
+
   .content {
     flex: 1;
     overflow-y: auto;
     padding: 12px 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .content::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
   }
 
   .status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
     text-align: center;
     color: var(--text-muted);
     padding: 32px 0;

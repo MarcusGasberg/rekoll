@@ -8,12 +8,13 @@ export async function addEvent(
   const recent = await db.browsing_events
     .where('url')
     .equals(event.url)
-    .and((e) => e.timestamp > Date.now() - 30_000)
+    .and((e) => e.timestamp > Date.now() - 30_000 && e.eventType === event.eventType)
     .first();
 
   if (recent?.id != null) return recent.id;
 
-  return db.browsing_events.add(event as BrowsingEvent);
+  const id = await db.browsing_events.add(event as BrowsingEvent);
+  return id!;
 }
 
 export async function getRecentEvents(

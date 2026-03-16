@@ -7,15 +7,16 @@
 }
 
 :root {
-  --bg: #1a1a2e;
-  --bg-card: #16213e;
-  --bg-card-hover: #1a2745;
-  --text: #e0e0e0;
-  --text-muted: #8892a4;
-  --accent: #6c63ff;
-  --accent-dim: #4a44b2;
-  --border: #2a2a4a;
-  --tag-bg: #2a2a4a;
+  --bg: #0a0a0a;
+  --bg-card: rgba(23, 23, 23, 0.8);
+  --bg-card-hover: rgba(38, 38, 38, 0.6);
+  --text: #fafafa;
+  --text-secondary: #e5e5e5;
+  --text-muted: #a3a3a3;
+  --text-dim: #737373;
+  --border: rgba(38, 38, 38, 0.6);
+  --border-hover: #404040;
+  --tag-bg: #262626;
 }
 
 body {
@@ -28,4 +29,17 @@ body {
 
 #app {
   min-height: 100vh;
+}
+
+.icon {
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.icon-spin {
+  animation: spin 1.2s linear infinite;
 }

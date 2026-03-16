@@ -5,7 +5,7 @@ export default defineConfig({
   srcDir: 'src',
   modules: ['@wxt-dev/module-svelte'],
   manifest: {
-    name: 'Browsing Context Capture',
+    name: 'Rekoll',
     description:
       'Captures browsing interactions into a local database for natural language querying',
     permissions: [

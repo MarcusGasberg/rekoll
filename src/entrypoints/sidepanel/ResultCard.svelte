@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Capture } from './icons';
+
   interface Props {
     event: {
       id?: number;
@@ -8,6 +10,7 @@
       eventType: string;
       title: string;
       textContent: string;
+      metadata?: Record<string, unknown>;
     };
     score?: number;
   }
@@ -36,6 +39,39 @@
       ? event.textContent.slice(0, 150) + '...'
       : event.textContent
   );
+
+  let metadataItems = $derived.by(() => {
+    const meta = event.metadata;
+    if (!meta || Object.keys(meta).length === 0) return [];
+
+    const items: { label: string; value: string }[] = [];
+
+    switch (event.eventType) {
+      case 'video_watch': {
+        if (meta.channel != null) items.push({ label: 'Channel:', value: String(meta.channel) });
+        if (meta.viewCount != null) items.push({ label: 'Views:', value: String(meta.viewCount) });
+        break;
+      }
+      case 'purchase': {
+        if (meta.price != null) items.push({ label: 'Price:', value: String(meta.price) });
+        break;
+      }
+      case 'like': {
+        const liked = meta.videoTitle ?? meta.tweetText ?? meta.postTitle ?? meta.pageTitle;
+        if (liked != null) items.push({ label: 'Liked:', value: String(liked) });
+        break;
+      }
+      default: {
+        const entries = Object.entries(meta).filter(([key]) => key !== 'action');
+        for (const [key, val] of entries.slice(0, 3)) {
+          items.push({ label: `${key}:`, value: String(val) });
+        }
+        break;
+      }
+    }
+
+    return items;
+  });
 </script>
 
 <article class="card">
@@ -48,7 +84,7 @@
 
   <div class="tags">
     <span class="badge domain">{event.domain}</span>
-    <span class="badge event-type">{event.eventType}</span>
+    <span class="badge event-type event-type--{event.eventType}">{#if event.eventType === 'page_visit'}<Capture size={10} />&nbsp;{/if}{event.eventType}</span>
     {#if score != null}
       <span class="badge score">{Math.round(score * 100)}%</span>
     {/if}
@@ -57,20 +93,28 @@
   {#if snippet}
     <p class="snippet">{snippet}</p>
   {/if}
+
+  {#if metadataItems.length > 0}
+    <div class="metadata">
+      {#each metadataItems as item (item.label)}
+        <span class="meta-item"><span class="meta-label">{item.label}</span> {item.value}</span>
+      {/each}
+    </div>
+  {/if}
 </article>
 
 <style>
   .card {
-    background: var(--bg-card);
+    background: rgba(23, 23, 23, 0.6);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 12px;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: all 0.15s ease;
   }
 
   .card:hover {
     background: var(--bg-card-hover);
-    border-color: var(--accent);
+    border-color: var(--border-hover);
   }
 
   header {
@@ -82,10 +126,10 @@
   }
 
   .title {
-    color: var(--accent);
+    color: var(--text);
     text-decoration: none;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -95,12 +139,12 @@
   }
 
   .title:hover {
-    text-decoration: underline;
+    color: #fff;
   }
 
   .time {
-    color: var(--text-muted);
-    font-size: 12px;
+    color: var(--text-dim);
+    font-size: 10px;
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -113,32 +157,85 @@
   }
 
   .badge {
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 500;
     padding: 2px 8px;
     border-radius: 4px;
     background: var(--tag-bg);
+    border: 1px solid var(--border);
     color: var(--text-muted);
     white-space: nowrap;
   }
 
   .event-type {
-    background: var(--accent);
-    color: var(--bg-card);
-    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .event-type--video_watch {
+    border-color: rgba(30, 64, 175, 0.6);
+    color: #60a5fa;
+  }
+
+  .event-type--purchase {
+    border-color: rgba(22, 101, 52, 0.6);
+    color: #4ade80;
+  }
+
+  .event-type--like {
+    border-color: rgba(157, 23, 77, 0.6);
+    color: #f472b6;
+  }
+
+  .event-type--page_visit {
+    border-color: var(--border-hover);
+    color: var(--text-secondary);
+  }
+
+  .event-type--form_submit {
+    border-color: rgba(120, 53, 15, 0.6);
+    color: #fb923c;
   }
 
   .score {
-    background: var(--accent-dim);
-    color: #fff;
-    font-weight: 600;
+    background: rgba(64, 64, 64, 0.5);
+    color: var(--text);
+    font-weight: 500;
     margin-left: auto;
   }
 
   .snippet {
     color: var(--text-muted);
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.6;
     margin: 0;
     word-break: break-word;
+  }
+
+  .metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .meta-item {
+    font-size: 11px;
+    color: var(--text-dim);
+    background: rgba(38, 38, 38, 0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .meta-label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 9px;
+    color: var(--text-dim);
   }
 </style>

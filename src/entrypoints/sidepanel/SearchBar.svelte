@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { RecallAi, LocalEngine } from './icons';
+
   interface Props {
     onsearch: (query: string) => void;
     onreset: () => void;
@@ -26,6 +28,9 @@
 
 <form class="search-bar" onsubmit={handleSubmit}>
   <div class="input-wrapper">
+    <span class="input-icon">
+      <RecallAi size={14} />
+    </span>
     <input
       type="text"
       bind:value={query}
@@ -37,16 +42,16 @@
         &times;
       </button>
     {/if}
+    <button type="submit" class="submit-btn" disabled={loading || !query.trim()} aria-label="Search">
+      {#if loading}
+        Searching...
+      {:else}
+        <RecallAi size={14} />
+      {/if}
+    </button>
   </div>
-  <button type="submit" class="submit-btn" disabled={loading || !query.trim()}>
-    {#if loading}
-      Searching...
-    {:else}
-      Search
-    {/if}
-  </button>
   {#if !modelReady}
-    <p class="model-status">Loading model...</p>
+    <p class="model-status"><LocalEngine size={12} /> Loading model...</p>
   {/if}
 </form>
 
@@ -61,14 +66,27 @@
     position: relative;
     display: flex;
     align-items: center;
+    gap: 8px;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    display: flex;
+    z-index: 1;
+    pointer-events: none;
   }
 
   input {
-    width: 100%;
-    padding: 8px 32px 8px 12px;
+    flex: 1;
+    min-width: 0;
+    padding: 8px 32px 8px 32px;
     border: 1px solid var(--border);
     border-radius: 6px;
-    background: var(--bg-card);
+    background: var(--bg);
     color: var(--text);
     font-size: 14px;
     outline: none;
@@ -76,11 +94,11 @@
   }
 
   input::placeholder {
-    color: var(--text-muted);
+    color: var(--text-dim);
   }
 
   input:focus {
-    border-color: var(--accent);
+    border-color: var(--border-hover);
   }
 
   input:disabled {
@@ -89,7 +107,7 @@
 
   .clear-btn {
     position: absolute;
-    right: 6px;
+    right: calc(16px + 70px);
     background: none;
     border: none;
     color: var(--text-muted);
@@ -107,18 +125,20 @@
 
   .submit-btn {
     padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background: var(--accent);
-    color: var(--bg-card);
-    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--tag-bg);
+    color: var(--text);
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: all 0.15s;
+    flex-shrink: 0;
   }
 
   .submit-btn:hover:not(:disabled) {
-    background: var(--accent-dim);
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
   }
 
   .submit-btn:disabled {
@@ -128,7 +148,12 @@
 
   .model-status {
     margin: 0;
-    font-size: 12px;
+    font-size: 10px;
     color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 </style>
