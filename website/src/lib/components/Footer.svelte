@@ -11,7 +11,7 @@
 			<div class="flex items-center gap-6 text-sm text-neutral-600">
 				<span class="hover:text-neutral-300 transition-colors cursor-pointer">Privacy</span>
 				<span class="hover:text-neutral-300 transition-colors cursor-pointer">Terms</span>
-				<a href="https://github.com" class="hover:text-neutral-300 transition-colors">GitHub</a>
+				<a href="https://github.com/MarcusGasberg/rekoll" class="hover:text-neutral-300 transition-colors">GitHub</a>
 				<span>&copy; {new Date().getFullYear()}</span>
 			</div>
 		</div>

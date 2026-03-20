@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && npx wrangler pages deploy build --project-name=rekoll-website"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.8",

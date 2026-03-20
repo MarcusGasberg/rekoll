@@ -2,6 +2,8 @@
 
 A browser extension that captures browsing interactions into a local database for natural language querying. Built with [WXT](https://wxt.dev/) and [Svelte 5](https://svelte.dev/).
 
+**Website:** https://rekoll-website.pages.dev
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or later)
