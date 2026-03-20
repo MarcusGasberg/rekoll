@@ -6,7 +6,7 @@
 					<span class="h-3.5 w-3.5 rounded-full bg-neutral-600"></span>
 					<span class="absolute h-1.5 w-1.5 rounded-full bg-neutral-950"></span>
 				</span>
-				<span class="text-sm">Rekoll Labs</span>
+				<span class="text-sm">Rekoll</span>
 			</div>
 			<div class="flex items-center gap-6 text-sm text-neutral-600">
 				<span class="hover:text-neutral-300 transition-colors cursor-pointer">Privacy</span>

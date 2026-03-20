@@ -77,3 +77,26 @@ body {
 		opacity: 1;
 	}
 }
+
+@keyframes embed-process {
+	0% {
+		border-color: var(--color-neutral-700);
+	}
+	50% {
+		border-color: rgba(96, 165, 250, 0.4);
+	}
+	100% {
+		border-color: var(--color-neutral-700);
+	}
+}
+
+@keyframes score-pop {
+	from {
+		transform: scale(0.8);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}

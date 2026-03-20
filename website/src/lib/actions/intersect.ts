@@ -1,10 +1,11 @@
 export function intersect(
 	node: HTMLElement,
-	options?: { threshold?: number; once?: boolean; onIntersect?: () => void }
+	options?: { threshold?: number; once?: boolean; onIntersect?: () => void; onUnintersect?: () => void }
 ) {
 	const threshold = options?.threshold ?? 0.2;
 	const once = options?.once ?? true;
 	const callback = options?.onIntersect;
+	const unintersectCallback = options?.onUnintersect;
 
 	const observer = new IntersectionObserver(
 		(entries) => {
@@ -15,6 +16,7 @@ export function intersect(
 					if (once) observer.unobserve(node);
 				} else if (!once) {
 					node.classList.remove('in-view');
+					unintersectCallback?.();
 				}
 			}
 		},
