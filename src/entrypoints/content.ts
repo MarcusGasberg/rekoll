@@ -25,32 +25,6 @@ export default defineContentScript({
       },
     );
 
-    // Listen for form success events from main-world script
-    document.addEventListener('__bcc_form_success', ((
-      event: CustomEvent<Record<string, unknown>>,
-    ) => {
-      const detail = event.detail;
-      const message: PageCapturedMessage = {
-        type: 'PAGE_CAPTURED',
-        data: {
-          url: (detail.pageUrl as string) ?? location.href,
-          domain: location.hostname,
-          timestamp: (detail.timestamp as number) ?? Date.now(),
-          eventType: 'form_submit',
-          title: (detail.pageTitle as string) ?? document.title,
-          textContent: 'Form Submit',
-          metadata: {
-            formAction: detail.formAction,
-            formId: detail.formId,
-            action: 'form_submit',
-          },
-        },
-      };
-      browser.runtime.sendMessage(message).catch((err) => {
-        console.error('[content] Failed to send form event:', err);
-      });
-    }) as EventListener);
-
     // Initial capture + setup
     capturePage();
     setupInteractions();

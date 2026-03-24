@@ -5,6 +5,12 @@ function getSubreddit(url: URL): string {
   return match?.[1] ?? '';
 }
 
+function extractSubredditFromPermalink(permalink: string | null | undefined): string {
+  if (!permalink) return '';
+  const match = permalink.match(/\/r\/([^/]+)/);
+  return match?.[1] ?? '';
+}
+
 function getPostTitle(doc: Document): string {
   // Try standard h1 first
   const h1 = doc.querySelector('h1')?.textContent?.trim();
@@ -39,13 +45,21 @@ export const redditExtractor: SiteExtractor = {
   getInteractionSpecs(): InteractionSpec[] {
     return [
       {
-        selector: '[aria-label="upvote"], button[upvote]',
+        selector: '[aria-label="upvote"]',
         eventType: 'like',
         label: 'Reddit Upvote',
-        extractMetadata(_el, doc) {
+        extractMetadata(el, doc) {
           const url = new URL(window.location.href);
-          const subreddit = getSubreddit(url);
-          const title = getPostTitle(doc);
+          // Find the shreddit-post shadow host for accurate per-post context
+          const root = el.getRootNode();
+          const post = root instanceof ShadowRoot ? (root.host as Element) : null;
+          const title = post?.getAttribute('post-title') ?? getPostTitle(doc);
+          // Pull subreddit from the post element if not in the URL (e.g. front page)
+          const subreddit =
+            getSubreddit(url) ||
+            post?.getAttribute('subreddit-prefixed-name')?.replace(/^r\//, '') ||
+            extractSubredditFromPermalink(post?.getAttribute('permalink')) ||
+            '';
           return { subreddit, postTitle: title, action: 'upvote' };
         },
       },

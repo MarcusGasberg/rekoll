@@ -48,6 +48,9 @@ export interface SearchRequest {
 export interface SearchResult {
   event: BrowsingEvent;
   score: number;
+  matchType?: 'semantic' | 'keyword' | 'both';
+  sessionId?: number;
+  sessionNarrative?: string;
 }
 
 export interface SearchResponse {

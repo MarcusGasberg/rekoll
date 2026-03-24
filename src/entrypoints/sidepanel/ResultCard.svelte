@@ -13,9 +13,11 @@
       metadata?: Record<string, unknown>;
     };
     score?: number;
+    query?: string;
+    matchType?: 'semantic' | 'keyword' | 'both';
   }
 
-  let { event, score }: Props = $props();
+  let { event, score, query, matchType }: Props = $props();
 
   function relativeTime(timestamp: number): string {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
@@ -39,6 +41,28 @@
       ? event.textContent.slice(0, 150) + '...'
       : event.textContent
   );
+
+  let snippetSegments = $derived.by(() => {
+    if (!query || !snippet) return [{ text: snippet ?? '', highlight: false }];
+    const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+    if (terms.length === 0) return [{ text: snippet, highlight: false }];
+    const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const pattern = new RegExp(`(${escaped.join('|')})`, 'gi');
+    const segments: { text: string; highlight: boolean }[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(snippet)) !== null) {
+      if (match.index > lastIndex) {
+        segments.push({ text: snippet.slice(lastIndex, match.index), highlight: false });
+      }
+      segments.push({ text: match[1], highlight: true });
+      lastIndex = pattern.lastIndex;
+    }
+    if (lastIndex < snippet.length) {
+      segments.push({ text: snippet.slice(lastIndex), highlight: false });
+    }
+    return segments.length > 0 ? segments : [{ text: snippet, highlight: false }];
+  });
 
   let metadataItems = $derived.by(() => {
     const meta = event.metadata;
@@ -88,10 +112,11 @@
     {#if score != null}
       <span class="badge score">{Math.round(score * 100)}%</span>
     {/if}
+    {#if matchType}<span class="badge match-type match-type--{matchType}">{matchType}</span>{/if}
   </div>
 
   {#if snippet}
-    <p class="snippet">{snippet}</p>
+    <p class="snippet">{#each snippetSegments as segment, i (i)}{#if segment.highlight}<mark>{segment.text}</mark>{:else}{segment.text}{/if}{/each}</p>
   {/if}
 
   {#if metadataItems.length > 0}
@@ -196,11 +221,6 @@
     color: var(--text-secondary);
   }
 
-  .event-type--form_submit {
-    border-color: rgba(120, 53, 15, 0.6);
-    color: #fb923c;
-  }
-
   .score {
     background: rgba(64, 64, 64, 0.5);
     color: var(--text);
@@ -237,5 +257,33 @@
     letter-spacing: 0.05em;
     font-size: 9px;
     color: var(--text-dim);
+  }
+
+  .snippet mark {
+    background: rgba(250, 204, 21, 0.25);
+    color: var(--text);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  .match-type {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .match-type--semantic {
+    border-color: rgba(139, 92, 246, 0.4);
+    color: #a78bfa;
+  }
+
+  .match-type--keyword {
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+  }
+
+  .match-type--both {
+    border-color: rgba(52, 211, 153, 0.4);
+    color: #34d399;
   }
 </style>

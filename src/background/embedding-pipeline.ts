@@ -1,3 +1,4 @@
+import { browser } from 'wxt/browser';
 import {
   pipeline,
   env,
@@ -8,7 +9,11 @@ import {
 env.allowLocalModels = false;
 env.useBrowserCache = true;
 // Point ONNX Runtime to bundled WASM files instead of CDN (blocked by MV3 CSP)
-env.backends.onnx.wasm!.wasmPaths = chrome.runtime.getURL('/wasm/');
+env.backends.onnx.wasm!.wasmPaths = browser.runtime.getURL('/wasm/' as any);
+// Disable threading when SharedArrayBuffer is unavailable (e.g. Firefox background page)
+if (typeof SharedArrayBuffer === 'undefined') {
+  env.backends.onnx.wasm!.numThreads = 1;
+}
 
 const MODEL_ID = 'Xenova/all-MiniLM-L6-v2';
 

@@ -6,3 +6,4 @@ export { default as EntityGraph } from './EntityGraph.svelte';
 export { default as LocalEngine } from './LocalEngine.svelte';
 export { default as Parameters } from './Parameters.svelte';
 export { default as PurgeNode } from './PurgeNode.svelte';
+export { default as Resync } from './Resync.svelte';

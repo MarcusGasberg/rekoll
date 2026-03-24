@@ -1,4 +1,4 @@
-import { embedText, getStatus, initPipeline } from './embedding-pipeline';
+import { embedText, getStatus, initPipeline } from '@/background/embedding-pipeline';
 import type {
   EmbedTextRequest,
   ModelStatusRequest,
@@ -8,20 +8,20 @@ import type {
 initPipeline().catch(console.error);
 
 // Handle messages from background service worker
-chrome.runtime.onMessage.addListener(
+browser.runtime.onMessage.addListener(
   (message: (EmbedTextRequest | ModelStatusRequest) & { target?: string; requestId?: string }) => {
     // Only handle messages explicitly targeted at the offscreen document
     if (message.target !== 'offscreen') return;
 
     if (message.type === 'EMBED_TEXT') {
       handleEmbedText(message).then((response) => {
-        chrome.runtime.sendMessage({ ...response, requestId: message.requestId });
+        browser.runtime.sendMessage({ ...response, requestId: message.requestId });
       });
     }
 
     if (message.type === 'MODEL_STATUS') {
       const status = getStatus();
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: 'MODEL_STATUS_RESULT',
         ...status,
         requestId: message.requestId,

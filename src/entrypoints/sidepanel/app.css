@@ -43,3 +43,7 @@ body {
 .icon-spin {
   animation: spin 1.2s linear infinite;
 }
+
+.icon-spin-once {
+  animation: spin 0.6s ease-in-out;
+}

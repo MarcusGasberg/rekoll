@@ -3,7 +3,7 @@ export type EventType =
   | 'purchase'
   | 'video_watch'
   | 'like'
-  | 'form_submit';
+;
 
 export interface BrowsingEvent {
   id?: number;
@@ -15,13 +15,26 @@ export interface BrowsingEvent {
   textContent: string;
   metadata?: Record<string, unknown>;
   embeddingId?: number;
+  sessionId?: number;
 }
 
 export interface EmbeddingRecord {
   id?: number;
-  eventId: number;
+  eventId?: number;
+  sessionId?: number;
+  sourceType: 'event' | 'session';
   vector: Float32Array;
   modelVersion: string;
+}
+
+export interface Session {
+  id?: number;
+  startTime: number;
+  endTime: number;
+  narrative: string;
+  embeddingId?: number;
+  eventIds: number[];
+  domains: string[];
 }
 
 // Message types for chrome.runtime messaging

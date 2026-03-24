@@ -8,6 +8,7 @@ export async function addEmbedding(
 ): Promise<number> {
   const id = (await db.embeddings.add({
     eventId,
+    sourceType: 'event',
     vector,
     modelVersion,
   } as EmbeddingRecord)) as number;
@@ -16,6 +17,30 @@ export async function addEmbedding(
   await db.browsing_events.update(eventId, { embeddingId: id });
 
   return id;
+}
+
+export async function addSessionEmbedding(
+  sessionId: number,
+  vector: Float32Array,
+  modelVersion: string,
+): Promise<number> {
+  const id = (await db.embeddings.add({
+    sessionId,
+    sourceType: 'session',
+    vector,
+    modelVersion,
+  } as EmbeddingRecord)) as number;
+
+  await db.sessions.update(sessionId, { embeddingId: id });
+
+  return id;
+}
+
+export async function updateEmbeddingVector(
+  embeddingId: number,
+  vector: Float32Array,
+): Promise<void> {
+  await db.embeddings.update(embeddingId, { vector });
 }
 
 export async function getAllEmbeddings(): Promise<EmbeddingRecord[]> {
@@ -33,4 +58,19 @@ export async function getUnembeddedEventIds(): Promise<number[]> {
     .filter((e) => e.embeddingId == null)
     .toArray();
   return events.map((e) => e.id!);
+}
+
+export async function getUnembeddedSessionIds(): Promise<number[]> {
+  const sessions = await db.sessions
+    .filter((s) => s.embeddingId == null)
+    .toArray();
+  return sessions.map((s) => s.id!);
+}
+
+/** Find event IDs whose embeddings use an outdated model version. */
+export async function getStaleEmbeddingEventIds(currentVersion: string): Promise<number[]> {
+  const stale = await db.embeddings
+    .filter((e) => e.sourceType === 'event' && e.modelVersion !== currentVersion)
+    .toArray();
+  return stale.filter((e) => e.eventId != null).map((e) => e.eventId!);
 }

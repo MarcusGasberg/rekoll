@@ -4,7 +4,7 @@
   import ResultCard from './ResultCard.svelte';
   import SearchBar from './SearchBar.svelte';
   import EventTypeFilter from './EventTypeFilter.svelte';
-  import { CoreLoop, Timeline, RecallAi } from './icons';
+  import { CoreLoop, Timeline, RecallAi, Resync } from './icons';
 
   let events: BrowsingEvent[] = $state([]);
   let loading = $state(true);
@@ -13,6 +13,8 @@
   let searchMode = $state(false);
   let modelReady = $state(false);
   let eventTypeFilter: EventType | null = $state(null);
+  let currentQuery = $state('');
+  let refreshSpin = $state(false);
 
   let filteredEvents = $derived(
     eventTypeFilter ? events.filter((e) => e.eventType === eventTypeFilter) : events
@@ -36,6 +38,7 @@
   }
 
   async function handleSearch(query: string) {
+    currentQuery = query;
     searching = true;
     searchMode = true;
     try {
@@ -55,9 +58,16 @@
     }
   }
 
+  function handleRefresh() {
+    refreshSpin = true;
+    fetchEvents();
+    setTimeout(() => { refreshSpin = false; }, 600);
+  }
+
   function handleReset() {
     searchResults = [];
     searchMode = false;
+    currentQuery = '';
   }
 
   async function checkModelStatus() {
@@ -92,8 +102,8 @@
       <h1 class="title">Browsing Events</h1>
       <span class="count">{searchMode ? searchResults.length : filteredEvents.length}</span>
     </div>
-    <button class="refresh-btn" onclick={fetchEvents} disabled={loading}>
-      {loading ? 'Loading...' : 'Refresh'}
+    <button class="refresh-btn" onclick={handleRefresh} disabled={loading} aria-label="Refresh events">
+      <Resync size={16} class={refreshSpin ? 'icon-spin-once' : ''} />
     </button>
   </header>
 
@@ -128,7 +138,7 @@
       {:else}
         <div class="event-list">
           {#each searchResults as result, i (i)}
-            <ResultCard event={result.event} score={result.score} />
+            <ResultCard event={result.event} score={result.score} matchType={result.matchType} query={currentQuery} />
           {/each}
         </div>
       {/if}
@@ -193,12 +203,14 @@
   }
 
   .refresh-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--tag-bg);
     color: var(--text-muted);
     border: 1px solid var(--border);
-    padding: 6px 14px;
+    padding: 6px 8px;
     border-radius: 8px;
-    font-size: 12px;
     cursor: pointer;
     transition: all 0.15s;
   }

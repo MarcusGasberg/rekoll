@@ -15,12 +15,15 @@ export function startInteractionObserver(
   const DEBOUNCE_MS = 2000;
 
   function handler(event: Event) {
-    let target = event.target as Element | null;
+    const path = event.composedPath();
 
-    while (target && target !== document.body) {
+    for (const node of path) {
+      if (!(node instanceof Element)) continue;
+      if (node === document.body) break;
+
       for (const spec of specs) {
         try {
-          if (!target.matches(spec.selector)) continue;
+          if (!node.matches(spec.selector)) continue;
         } catch {
           continue; // invalid selector
         }
@@ -30,7 +33,7 @@ export function startInteractionObserver(
         const lastFired = debounceMap.get(spec.selector) ?? 0;
         if (now - lastFired < DEBOUNCE_MS) return;
 
-        const metadata = spec.extractMetadata(target, document);
+        const metadata = spec.extractMetadata(node, document);
         if (!metadata) return;
 
         debounceMap.set(spec.selector, now);
@@ -41,7 +44,6 @@ export function startInteractionObserver(
         });
         return; // first match wins
       }
-      target = target.parentElement;
     }
   }
 

@@ -9,8 +9,8 @@
 				<span class="text-sm">Rekoll</span>
 			</div>
 			<div class="flex items-center gap-6 text-sm text-neutral-600">
-				<span class="hover:text-neutral-300 transition-colors cursor-pointer">Privacy</span>
-				<span class="hover:text-neutral-300 transition-colors cursor-pointer">Terms</span>
+				<a href="/privacy" class="hover:text-neutral-300 transition-colors">Privacy</a>
+				<a href="/terms" class="hover:text-neutral-300 transition-colors">Terms</a>
 				<a href="https://github.com/MarcusGasberg/rekoll" class="hover:text-neutral-300 transition-colors">GitHub</a>
 				<span>&copy; {new Date().getFullYear()}</span>
 			</div>

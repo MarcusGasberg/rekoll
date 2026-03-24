@@ -15,7 +15,6 @@
     { label: 'Video', value: 'video_watch' },
     { label: 'Purchase', value: 'purchase' },
     { label: 'Like', value: 'like' },
-    { label: 'Form', value: 'form_submit' },
   ];
 
   function handleClick(value: EventType | null) {
