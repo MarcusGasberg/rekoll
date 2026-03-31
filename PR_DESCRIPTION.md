@@ -13,13 +13,6 @@ The design now follows these core principles:
 - **Confident emptiness** — Whitespace is intentional
 - **Invisible interaction** — Hover states reveal, not decorate
 
-### Visual Changes
-
-| Before (AI Slop) | After (Memoria-Design) |
-|:--:|:--:|
-| <img src="https://raw.githubusercontent.com/MarcusGasberg/rekoll/visual-improvement/before.png" width="400"> | <img src="https://raw.githubusercontent.com/MarcusGasberg/rekoll/visual-improvement/after.png" width="400"> |
-| Blue/purple gradient, glassmorphism | Clean monochromatic, purposeful |
-
 ### Changes Made
 
 **Removed AI Slop:**
@@ -36,9 +29,19 @@ The design now follows these core principles:
 - ✅ Blur-to-clear text animations (sequential revelation)
 - ✅ Clean hover states (border brightens, no decorative effects)
 
-### Side-by-Side Comparison
+### Visual Summary
 
-<img src="https://raw.githubusercontent.com/MarcusGasberg/rekoll/visual-improvement/comparison.png" width="800">
+**Before:** Search box had blue/purple gradient border on hover, navbar used glassmorphism (`backdrop-blur-xl`), cards had decorative rotating border-beam animation.
+
+**After:** Clean monochromatic design — search box has subtle border color change on hover, navbar uses solid background, cards are clean without decorative effects.
+
+### Files Changed
+
+- `website/src/lib/components/Hero.svelte` — Removed gradient border effects
+- `website/src/lib/components/Nav.svelte` — Removed glassmorphism
+- `website/src/lib/components/BentoGrid.svelte` — Removed border-beam animation
+- `website/src/app.css` — Removed unused animations, changed font to Geist
+- `website/src/routes/+page.svelte` — Updated font import
 
 ### Design Context
 
