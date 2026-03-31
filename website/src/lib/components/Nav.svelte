@@ -3,7 +3,7 @@
 </script>
 
 <nav
-	class="fixed top-0 left-0 right-0 z-50 border-b border-neutral-800/60 bg-neutral-950/80 backdrop-blur-xl"
+	class="fixed top-0 left-0 right-0 z-50 border-b border-neutral-800/60 bg-neutral-950"
 >
 	<div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
 		<a href="/" class="flex items-center gap-2.5 text-neutral-50 no-underline">

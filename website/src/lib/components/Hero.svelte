@@ -82,10 +82,6 @@
 				: 'opacity-0 translate-y-4'}"
 		>
 			<div class="relative group">
-				<!-- Animated gradient border -->
-				<div class="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-blue-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"></div>
-				<div class="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-gradient-shift"></div>
-				
 				<div class="relative flex items-center px-5 py-3.5 rounded-xl border border-neutral-800 bg-neutral-900/60 h-13 group-hover:border-neutral-700 transition-colors duration-300">
 					<svg class="w-4 h-4 text-neutral-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -116,19 +112,5 @@
 <style>
 	.animate-word-reveal {
 		animation: word-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-	}
-
-	.animate-gradient-shift {
-		background-size: 200% 100%;
-		animation: gradient-shift 3s ease infinite;
-	}
-
-	@keyframes gradient-shift {
-		0%, 100% {
-			background-position: 0% 50%;
-		}
-		50% {
-			background-position: 100% 50%;
-		}
 	}
 </style>
