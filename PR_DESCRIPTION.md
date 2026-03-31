@@ -13,6 +13,13 @@ The design now follows these core principles:
 - **Confident emptiness** — Whitespace is intentional
 - **Invisible interaction** — Hover states reveal, not decorate
 
+### Visual Changes
+
+| Before (AI Slop) | After (Memoria-Design) |
+|:--:|:--:|
+| <img src="https://raw.githubusercontent.com/MarcusGasberg/rekoll/visual-improvement/before.png" width="400"> | <img src="https://raw.githubusercontent.com/MarcusGasberg/rekoll/visual-improvement/after.png" width="400"> |
+| Blue/purple gradient, glassmorphism | Clean monochromatic, purposeful |
+
 ### Changes Made
 
 **Removed AI Slop:**
@@ -29,15 +36,9 @@ The design now follows these core principles:
 - ✅ Blur-to-clear text animations (sequential revelation)
 - ✅ Clean hover states (border brightens, no decorative effects)
 
-### Visual Comparison
+### Side-by-Side Comparison
 
-| Before | After |
-|--------|-------|
-| ![Before](before.png) | ![After](after.png) |
-
-**Before:** Generic AI aesthetic with blue gradient hover effect, glassmorphism, overused Inter font
-
-**After:** Surgical precision aesthetic following memoria-design — monochromatic, purposeful, restrained
+<img src="https://raw.githubusercontent.com/MarcusGasberg/rekoll/visual-improvement/comparison.png" width="800">
 
 ### Design Context
 
