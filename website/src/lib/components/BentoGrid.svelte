@@ -25,16 +25,6 @@
 				style="transition-delay: 0ms"
 				use:tilt={{ max: 4, scale: 1.005 }}
 			>
-				<!-- Border beam effect -->
-				<div class="pointer-events-none absolute inset-0 rounded-xl" style="
-					background: conic-gradient(from var(--beam-angle, 0deg), transparent 0%, transparent 70%, rgba(255,255,255,0.15) 80%, transparent 90%);
-					-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-					mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-					-webkit-mask-composite: xor;
-					mask-composite: exclude;
-					padding: 1px;
-					animation: border-beam 4s linear infinite;
-				"></div>
 
 				<div>
 					<div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-800/60 text-neutral-400">

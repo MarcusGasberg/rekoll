@@ -56,7 +56,7 @@
 <section class="relative min-h-screen flex items-center justify-center px-6 pt-16">
 	<div class="text-center max-w-4xl mx-auto">
 		<div
-			class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-neutral-800 bg-neutral-900/50 text-sm text-neutral-500 mb-8 transition-all duration-700 {visible
+			class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-neutral-800 bg-neutral-900/50 text-sm text-neutral-500 mb-8 transition-all duration-700 hover:border-neutral-700 hover:bg-neutral-800/50 hover:text-neutral-400 {visible
 				? 'opacity-100 translate-y-0'
 				: 'opacity-0 translate-y-4'}"
 		>
@@ -81,12 +81,17 @@
 				? 'opacity-100 translate-y-0'
 				: 'opacity-0 translate-y-4'}"
 		>
-			<div class="flex items-center px-5 py-3.5 rounded-xl border border-neutral-800 bg-neutral-900/60 h-13">
-				<span class="text-neutral-400 text-base sm:text-lg font-light">{displayedText}</span>
-				<span
-					class="inline-block w-[2px] h-5 bg-neutral-400 ml-0.5"
-					style="animation: cursor-blink 1s step-end infinite;"
-				></span>
+			<div class="relative group">
+				<div class="relative flex items-center px-5 py-3.5 rounded-xl border border-neutral-800 bg-neutral-900/60 h-13 group-hover:border-neutral-700 transition-colors duration-300">
+					<svg class="w-4 h-4 text-neutral-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+					</svg>
+					<span class="text-neutral-400 text-base sm:text-lg font-light">{displayedText}</span>
+					<span
+						class="inline-block w-[2px] h-5 bg-neutral-400 ml-0.5"
+						style="animation: cursor-blink 1s step-end infinite;"
+					></span>
+				</div>
 			</div>
 		</div>
 

@@ -12,7 +12,7 @@
 	--color-neutral-200: #e5e5e5;
 	--color-neutral-100: #f5f5f5;
 	--color-neutral-50: #fafafa;
-	--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+	--font-sans: 'Geist', system-ui, -apple-system, sans-serif;
 }
 
 html {
@@ -30,21 +30,6 @@ body {
 ::selection {
 	background: rgba(255, 255, 255, 0.15);
 	color: #fff;
-}
-
-@property --beam-angle {
-	syntax: '<angle>';
-	initial-value: 0deg;
-	inherits: false;
-}
-
-@keyframes border-beam {
-	from {
-		--beam-angle: 0deg;
-	}
-	to {
-		--beam-angle: 360deg;
-	}
 }
 
 @keyframes pulse-skeleton {
