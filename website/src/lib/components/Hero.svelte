@@ -12,7 +12,7 @@
 		'tweets I liked about LLMs'
 	];
 
-	const headingWords = 'Your browsing history, searchable by meaning.'.split(' ');
+	const headingWords = 'Testing PR Flow'.split(' ');
 
 	onMount(() => {
 		setTimeout(() => { visible = true; }, 100);
